@@ -4,7 +4,7 @@
  * @polymerMixin
  * @mixinFunction
  */
-export const FireflyTrayMixin = superclass =>
+export const FireflyTrayMixin = (superclass) =>
   class extends superclass {
     static get properties() {
       return {
@@ -13,30 +13,30 @@ export const FireflyTrayMixin = superclass =>
           type: Array,
           value: [],
           notify: true,
-          observer: "onModelChange"
+          observer: "onModelChange",
         },
 
         /** The text of the dialog header. */
         dialogLabel: {
           type: String,
-          value: ""
+          value: "",
         },
 
         /** A flag that indicates that the paper-fab is small. */
         fabIsMini: {
           type: Boolean,
-          value: false
+          value: false,
         },
 
         data: {
           type: Object,
-          observer: "onDataChange"
+          observer: "onDataChange",
         },
 
         event: {
           type: String,
-          value: "event"
-        }
+          value: "event",
+        },
       };
     }
 
@@ -111,8 +111,8 @@ export const FireflyTrayMixin = superclass =>
           bubbles: true,
           composed: true,
           detail: {
-            msg: msg
-          }
+            msg: msg,
+          },
         })
       );
     }
@@ -137,8 +137,9 @@ export const FireflyTrayMixin = superclass =>
 
       try {
         query.ref.doc(e.detail.model.$key).delete();
-        msg = `Deleted ${this.event}: ${e.detail.model.name ||
-          e.detail.model.title}`;
+        msg = `Deleted ${this.event}: ${
+          e.detail.model.name || e.detail.model.title
+        }`;
       } catch (error) {
         msg = "An error occurred while adding an indication";
         console.log(error);
@@ -149,8 +150,8 @@ export const FireflyTrayMixin = superclass =>
           bubbles: true,
           composed: true,
           detail: {
-            msg: msg
-          }
+            msg: msg,
+          },
         })
       );
     }
@@ -179,8 +180,8 @@ export const FireflyTrayMixin = superclass =>
           bubbles: true,
           composed: true,
           detail: {
-            msg: msg
-          }
+            msg: msg,
+          },
         })
       );
     }
@@ -196,7 +197,8 @@ export const FireflyTrayMixin = superclass =>
       e.stopPropagation();
       console.log(e);
       if (!e.detail.metaKey) {
-        window.location = uri;
+        window.history.pushState({}, null, uri);
+        window.dispatchEvent(new CustomEvent("location-changed"));
       } else {
         window.open(uri, "_blank");
       }
@@ -232,31 +234,37 @@ export const FireflyTrayMixin = superclass =>
 
     connectedCallback() {
       super.connectedCallback();
-      this.addEventListener("card-selected", e => this._handleCardSelected(e));
-      this.addEventListener("card-added", e => {
+      this.addEventListener("card-selected", (e) =>
+        this._handleCardSelected(e)
+      );
+      this.addEventListener("card-added", (e) => {
         this._handleCardAdded(e);
       });
-      this.addEventListener("request-card-deleted", e => {
+      this.addEventListener("request-card-deleted", (e) => {
         this._requestCardDeleted(e);
       });
-      this.addEventListener("card-deleted", e => {
+      this.addEventListener("card-deleted", (e) => {
         this._handleCardDeleted(e);
       });
-      this.addEventListener("card-cloned", e => this._handleCardCloned(e));
-      this.addEventListener("card-launched", e => this._handleCardLaunched(e));
+      this.addEventListener("card-cloned", (e) => this._handleCardCloned(e));
+      this.addEventListener("card-launched", (e) =>
+        this._handleCardLaunched(e)
+      );
     }
 
     disconnectedCallback() {
       super.disconnectedCallback();
-      this.removeEventListener("card-selected", e =>
+      this.removeEventListener("card-selected", (e) =>
         this._handleCardSelected(e)
       );
-      this.removeEventListener("card-added", e => this._handleCardAdded(e));
-      this.removeEventListener("request-card-deleted", e =>
+      this.removeEventListener("card-added", (e) => this._handleCardAdded(e));
+      this.removeEventListener("request-card-deleted", (e) =>
         this._requestCardDeleted(e)
       );
-      this.removeEventListener("card-deleted", e => this._handleCardDeleted(e));
-      this.removeEventListener("card-launched", e =>
+      this.removeEventListener("card-deleted", (e) =>
+        this._handleCardDeleted(e)
+      );
+      this.removeEventListener("card-launched", (e) =>
         this._handleCardLaunched()
       );
     }
